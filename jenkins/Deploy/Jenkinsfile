@@ -18,7 +18,6 @@ pipeline {
      	    steps { 
                     sh 'sed "s/tag/$BUILD_NUMBER/g" jenkins/httpd2.template.yaml > httpd2.yaml'
                     sh 'sed "s/tag/$BUILD_NUMBER/g" jenkins/version.template.html > version.html'
-                    sh 'sed "s/tag/$BUILD_NUMBER/g" jenkins/version-test.template.sh > version-test.sh'
     	    }
     	}
         
