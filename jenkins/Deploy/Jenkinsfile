@@ -16,8 +16,8 @@ pipeline {
         
         stage('Populate tokens') {
      	    steps { 
-                    sh 'sed "s/tag/$BUILD_NUMBER/g" jenkins/httpd2.template.yaml > httpd2.yaml'
-                    sh 'sed "s/tag/$BUILD_NUMBER/g" jenkins/version.template.html > version.html'
+                    sh 'sed "s/tag/$BUILD_NUMBER/g" jenkins/httpd2.template.yaml > jenkins/httpd2.yaml'
+                    sh 'sed "s/tag/$BUILD_NUMBER/g" jenkins/version.template.html > jenkins/version.html'
     	    }
     	}
         
