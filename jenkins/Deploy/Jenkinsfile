@@ -1,0 +1,63 @@
+pipeline { 
+    environment { 
+        registry = "mm009780/first" 
+        registryCredential = 'madhu_dockerhubaccount' 
+        dockerImage = '' 
+    }
+
+    agent any 
+
+    stages { 
+        /*stage('Cloning our Git') { 
+            steps { 
+                git branch: 'main', url: 'https://github.com/zebra78/httpdcicd.git'
+            }
+        }*/ 
+        
+        stage('Populate tokens') {
+     	    steps { 
+                    sh 'sed "s/tag/$BUILD_NUMBER/g" httpd2.template.yaml > httpd2.yaml'
+                    sh 'sed "s/tag/$BUILD_NUMBER/g" version.template.html > version.html'
+                    sh 'sed "s/tag/$BUILD_NUMBER/g" version-test.template.sh > version-test.sh'
+    	    }
+    	}
+        
+        stage('Build docker image') { 
+            steps { 
+                script { 
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
+                }
+            } 
+        }
+        stage('Push image to registry') { 
+            steps { 
+                script { 
+                    docker.withRegistry( '', registryCredential ) { 
+                        dockerImage.push() 
+                    }
+                } 
+            }
+        }
+        
+    	stage('Deploy to Kubernetes') {
+    	    steps { 
+                sh 'kubectl apply -f ./httpd2.yaml'
+    	    }
+    	}
+		
+		stage('Test Deployment') {
+    	    steps { 
+                sh '''
+					sleep 30
+					curl -s "http://192.168.100.56:30000/version.html" | grep title | grep -o $BUILD_NUMBER
+				   ''' 
+    	    }
+    	}
+		
+        stage('Clean up') { 
+            steps { 
+                sh "docker rmi $registry:$BUILD_NUMBER" 
+            }
+        } 
+    }
+}
