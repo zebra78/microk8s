@@ -10,15 +10,15 @@ pipeline {
     stages { 
         /*stage('Cloning our Git') { 
             steps { 
-                git branch: 'main', url: 'https://github.com/zebra78/httpdcicd.git'
+                git branch: 'main', url: 'https://github.com/zebra78/microk8s.git'
             }
         }*/ 
         
         stage('Populate tokens') {
      	    steps { 
-                    sh 'sed "s/tag/$BUILD_NUMBER/g" httpd2.template.yaml > httpd2.yaml'
-                    sh 'sed "s/tag/$BUILD_NUMBER/g" version.template.html > version.html'
-                    sh 'sed "s/tag/$BUILD_NUMBER/g" version-test.template.sh > version-test.sh'
+                    sh 'sed "s/tag/$BUILD_NUMBER/g" jenkins/httpd2.template.yaml > httpd2.yaml'
+                    sh 'sed "s/tag/$BUILD_NUMBER/g" jenkins/version.template.html > version.html'
+                    sh 'sed "s/tag/$BUILD_NUMBER/g" jenkins/version-test.template.sh > version-test.sh'
     	    }
     	}
         
