@@ -1,0 +1,49 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jira-software
+spec:
+  serviceName: jira-software
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jira-software
+  template:
+    metadata:
+      labels:
+        app: jira-software
+    spec:
+      containers:
+      - name: jira-software
+        image: atlassian/jira-software
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: port8080
+          containerPort: 8080
+        volumeMounts:
+        - name: jiraVolume
+          mountPath: /var/atlassian/application-data/jira
+  volumeClaimTemplates:
+  - metadata:
+      name: jiraVolume
+    spec:
+      accessModes: [ "ReadWriteMany" ]
+      resources:
+        requests:
+          storage: 4Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jira-software-service
+spec:
+  selector:
+    app: jira-software
+  type: NodePort
+  ports:
+  - name: port8080
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
